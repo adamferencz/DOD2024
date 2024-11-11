@@ -203,7 +203,7 @@
             { x: 423.5, y: 835, width: 230, height: 50, title: "FJ", description: "Malý princ", room: "U5A", link: "#", code: "7777", type: "default" },
             { x: 522.5, y: 892, width: 135, height: 50, title: "AJ", description: "Kvízy o vynálezcích", room: "J1", link: "#", code: "8888", type: "default" },
             { x: 50, y: 600, width: 80, height: 50, title: "IT", description: "Létání s drony", room: "U3A", link: "#", code: "9999", type: "default" },
-            { x: 20, y: 340, width: 130, height: 50, title: "IT", description: "Microbit a 3D tisk", room: "U3D", link: "#", code: "0000", type: "default" },
+            { x: 5, y: 360, width: 130, height: 50, title: "IT", description: "Microbit a 3D tisk", room: "U3D", link: "#", code: "0000", type: "default" },
             { x: 900, y: 410, width: 90, height: 50, title: "RJ", description: "Harry Potter", room: "J4", link: "#", code: "1357", type: "default" },
             { x: 50, y: 1550, width: 120, height: 50, title: "CH", description: "Barevná chemie", room: "LCH", link: "#", code: "2468", type: "default" },
             { x: 150, y: 1380, width: 100, height: 50, title: "CH", description: "Fluorescence", room: "PCH", link: "#", code: "1234", type: "default" },
@@ -215,14 +215,13 @@
             { x: 460, y: 1360, width: 230, height: 50, title: "Kavárna", description: "Nejlepší kavárna", room: "U2A", link: "#", code: "2222", type: "default" },
             { x: 230, y: 1450, width: 230, height: 50, title: "Škola", description: "Prezentace školy", room: "U2C", link: "#", code: "3333", type: "default" },
             { x: 350, y: 1360, width: 230, height: 50, title: "Sbor", description: "Pěvecký sbor", room: "U2D", link: "#", code: "4444", type: "default" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "PZE", link: "#", code: "5555", type: "prijimacky" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U4A", link: "#", code: "6666", type: "prijimacky" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "UTA", link: "#", code: "7777", type: "prijimacky" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U6A", link: "#", code: "8888", type: "prijimacky" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U1A", link: "#", code: "9999", type: "prijimacky" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U3D", link: "#", code: "0000", type: "prijimacky" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U4C", link: "#", code: "1357", type: "prijimacky" },
-            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U1D", link: "#", code: "2468", type: "prijimacky" }
+            { x: 930, y: 600, width: 230, height: 50, title: "📑", description: "Přijímačky nanečisto", room: "PZE", link: "#", code: "5555", type: "prijimacky" },
+            { x: 750, y: 600, width: 230, height: 50, title: "📑", description: "Přijímačky nanečisto", room: "U4A", link: "#", code: "6666", type: "prijimacky" },
+            { x: 630, y: 400, width: 230, height: 50, title: "📑", description: "Přijímačky nanečisto", room: "UTA", link: "#", code: "7777", type: "prijimacky" },
+            { x: 530, y: 590, width: 230, height: 50, title: "📑", description: "Přijímačky nanečisto", room: "U6A", link: "#", code: "8888", type: "prijimacky" },
+            { x: 340, y: 400, width: 230, height: 50, title: "📑", description: "Přijímačky nanečisto", room: "U1A", link: "#", code: "9999", type: "prijimacky" },
+            { x: 160, y: 360, width: 230, height: 50, title: "📑", description: "Přijímačky nanečisto", room: "U3D", link: "#", code: "0000", type: "prijimacky" },
+            { x: 160, y: 420, width: 230, height: 50, title: "📑", description: "Přijímačky nanečisto", room: "U4C", link: "#", code: "1357", type: "prijimacky" },
         ];
 
         // Funkce pro výpočet šířky podle délky popisu
@@ -249,7 +248,7 @@
         zones.forEach((zone, index) => {
             if (zone.type !== "prijimacky") { // Vynecháme přijímačky
                 const option = document.createElement("option");
-                option.value = zone.title;
+                option.value = index;
                 option.textContent = `${zone.title} - ${zone.description}`;
                 zoneSelect.appendChild(option);
             }
@@ -291,7 +290,7 @@
                 rect.setAttribute("data-index", index);
 
                 // Přidání click event listeneru pro označení/odznačení zóny
-                rect.addEventListener('click', () => toggleZoneCompletion(index));
+                if (zone.type != "prijimacky") rect.addEventListener('click', () => toggleZoneCompletion(index));
 
                 const titleText = document.createElementNS("http://www.w3.org/2000/svg", "text");
                 titleText.classList.add("title");
