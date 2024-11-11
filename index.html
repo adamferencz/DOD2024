@@ -256,8 +256,8 @@
 
         // Funkce pro aktualizaci progress baru
         function updateProgress() {
-            const totalZones = zones.filter(zone =>zone.type !== "prijimacky").length;
-            const completedCount = completedZones.filter(zone =>zone.type !== "prijimacky").length;
+            const totalZones = zones.filter(zone => zone.type !== "prijimacky").length;
+            const completedCount = completedZones.filter(zone => zone.type !== "prijimacky").length;
 
             const percentage = (completedCount / totalZones) * 100;
 
@@ -376,6 +376,26 @@
         });
 
         updateZones();
+
+        // Detekce, zda se aplikace otevřela v interním prohlížeči Messengeru
+        function isInMessengerBrowser() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            return /FBAN|FBAV/.test(userAgent);
+        }
+
+        // Funkce pro přesměrování na normální webový prohlížeč
+        function redirectToNormalBrowser() {
+            // Získání aktuální URL adresy
+            const currentUrl = window.location.href;
+
+            // Přesměrování na aktuální URL adresu, ale v normálním webovém prohlížeči
+            window.location.replace(`https://www.example.com${currentUrl}`);
+        }
+
+        // Kontrola, zda se aplikace otevřela v Messengeru a případné přesměrování
+        if (isInMessengerBrowser()) {
+            redirectToNormalBrowser();
+        }
     </script>
 
 </body>
