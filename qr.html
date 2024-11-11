@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instascan QR Code Scanner</title>
+    <script src="https://unpkg.com/instascan@1.0.0/umd/instascan.min.js"></script>
+</head>
+<body>
+    <h1>QR Code Scanner with Instascan</h1>
+    <video id="preview" width="300" height="300" style="border: 1px solid black;"></video>
+    <p>QR Code Content: <span id="qr-content"></span></p>
+
+    <script>
+        // Funkce pro zpracování načteného QR kódu
+        function onScanSuccess(content) {
+            document.getElementById("qr-content").textContent = content;
+        }
+
+        // Inicializace skeneru Instascan
+        const scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        
+        scanner.addListener('scan', function (content) {
+            onScanSuccess(content);
+        });
+
+        // Otevření kamery
+        Instascan.Camera.getCameras().then(function (cameras) {
+            if (cameras.length > 0) {
+                // Výběr zadní kamery, pokud je dostupná
+                const rearCamera = cameras.find(camera => camera.name.toLowerCase().includes('back')) || cameras[0];
+                scanner.start(rearCamera);
+            } else {
+                console.error("No cameras found.");
+                alert("No cameras found. Please use a device with a camera.");
+            }
+        }).catch(function (e) {
+            console.error(e);
+            alert("Error accessing camera: " + e);
+        });
+    </script>
+</body>
+</html>
