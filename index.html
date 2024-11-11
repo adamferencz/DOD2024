@@ -59,9 +59,36 @@
             font-size: 14px;
             font-weight: normal;
         }
+
+        /* Stylování vyhledávací lišty */
+        .search-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        /* Zvýraznění vybrané zóny */
+        .highlight {
+            fill: rgba(255, 0, 0, 0.3);
+            border: 2px solid red;
+        }
     </style>
 </head>
 <body>
+
+    <div class="search-bar">
+        <label for="zoneSelect">Vyberte zónu:</label>
+        <select id="zoneSelect">
+            <option value="">-- Vyberte zónu --</option>
+            <!-- Dynamicky generované možnosti -->
+        </select>
+    </div>
 
 <figure id="projectsvg">
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1920" preserveAspectRatio="xMinYMin meet">
@@ -102,46 +129,42 @@
     { x: 143, y: 2150, width: 230, height: 50, title: "Sbor", description: "Pěvecký sbor", link: "#" }
 ];
 
-
     const svgElement = document.querySelector('svg');
     const coordinatesDiv = document.getElementById("coordinates");
 
     // Funkce pro logování souřadnic
     svgElement.addEventListener('click', function(event) {
-        // Získání souřadnic kliknutí
         const mouseX = event.offsetX;
         const mouseY = event.offsetY;
-
         
-        // Zobrazení souřadnic v HTML pro rychlou kontrolu
         coordinatesDiv.innerHTML = `Souřadnice myši: X: ${mouseX}, Y: ${mouseY}`;
-
-        // Přidání nové zóny do konfigurace
+        
         const newZone = {
-            x: mouseX*1.5+50, // Posunutí pro lepší umístění textu
-            y: mouseY*1.5+100,  // Posunutí pro lepší umístění textu
-            width: 230,      // Šířka nové zóny
-            height: 50,     // Výška nové zóny
-            label: `New Zone`,
+            x: mouseX * 1.5 + 50,
+            y: mouseY * 1.5 + 100,
+            width: 230,
+            height: 50,
+            title: "New Zone",
+            description: "Nová zóna",
             link: "#"
         };
 
-        // Výpis souřadnic do konzole v požadovaném formátu
-        console.log(`{ x: ${newZone.x}, y: ${newZone.y}, width: ${newZone.width}, height: ${newZone.height}, label: "${newZone.label}", link: "${newZone.link}" }`);
-
-
-        // Přidání nové zóny do seznamu
         zones.push(newZone);
-
-        // Dynamické generování zón
         updateZones();
     });
 
-    // Funkce pro vykreslení všech zón
+    // Inicializace vyhledávací lišty
+    const zoneSelect = document.getElementById('zoneSelect');
+    zones.forEach((zone, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${zone.title} - ${zone.description}`;
+        zoneSelect.appendChild(option);
+    });
+
     function updateZones() {
         svgElement.innerHTML = '<image width="1080" height="1920" xlink:href="mapa.png" />';
-
-        zones.forEach(zone => {
+        zones.forEach((zone, index) => {
             const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
             group.classList.add("hover_group");
 
@@ -151,6 +174,7 @@
             rect.setAttribute("y", zone.y);
             rect.setAttribute("width", zone.width);
             rect.setAttribute("height", zone.height);
+            rect.setAttribute("data-index", index);
 
             const titleText = document.createElementNS("http://www.w3.org/2000/svg", "text");
             titleText.classList.add("title");
@@ -173,6 +197,22 @@
     }
 
     updateZones();
+
+    function highlightZone(index) {
+        document.querySelectorAll('.zone').forEach(zone => zone.classList.remove('highlight'));
+        const selectedZone = document.querySelector(`.zone[data-index="${index}"]`);
+        if (selectedZone) {
+            selectedZone.classList.add('highlight');
+            selectedZone.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+        }
+    }
+
+    zoneSelect.addEventListener('change', (event) => {
+        const selectedIndex = event.target.value;
+        if (selectedIndex) {
+            highlightZone(selectedIndex);
+        }
+    });
 </script>
 
 </body>
