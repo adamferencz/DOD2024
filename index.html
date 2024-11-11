@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interaktivní mapa budovy</title>
     <style>
         /* Kontejner pro SVG */
-        #projectsvg { 
+        #projectsvg {
             position: relative;
-            width: 100%; 
+            width: 100%;
             height: 0;
-            padding-bottom: 177.78%; /* Poměr stran pro výšku 1920px a šířku 1080px */
-            vertical-align: middle; 
-            margin: 0; 
-            overflow: hidden; 
+            padding-bottom: 177.78%;
+            /* Poměr stran pro výšku 1920px a šířku 1080px */
+            vertical-align: middle;
+            margin: 0;
+            overflow: hidden;
         }
 
         /* Nový styl pro progress bar container */
@@ -57,11 +59,11 @@
 
 
         /* SVG pro pozadí */
-        #projectsvg svg { 
+        #projectsvg svg {
             display: inline-block;
-            position: absolute; 
-            top: 0; 
-            left: 0; 
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
         }
@@ -74,19 +76,22 @@
 
         /* Styly pro označení oblastí */
         .zone {
-            fill: rgba(255, 165, 0, 0.6); /* Oranžová barva */
+            fill: rgba(255, 165, 0, 0.6);
+            /* Oranžová barva */
             cursor: pointer;
             transition: fill 0.3s ease;
         }
 
         /* Ztmavení zóny při najetí */
         .zone:hover {
-            fill: rgba(255, 165, 0, 0.8); /* Ztmavení při najetí */
+            fill: rgba(255, 165, 0, 0.8);
+            /* Ztmavení při najetí */
         }
 
         /* Nový styl pro hotové zóny */
         .zone.completed {
-            fill: rgba(0, 255, 0, 0.6); /* Zelená barva pro hotové */
+            fill: rgba(0, 255, 0, 0.6);
+            /* Zelená barva pro hotové */
         }
 
         .zone.completed:hover {
@@ -112,7 +117,8 @@
         /* Stylování vyhledávací lišty */
         .search-bar {
             position: fixed;
-            bottom: 20px; /* Přesun na spodní část obrazovky */
+            bottom: 20px;
+            /* Přesun na spodní část obrazovky */
             left: 50%;
             transform: translateX(-50%);
             background-color: white;
@@ -129,26 +135,34 @@
         }
 
         /* Pulzující orámování */
-@keyframes pulseBorder {
-    0% {
-        fill: rgba(255, 0, 0, 0.5); /* Začátek - červené */
-    }
-    50% {
-        fill: rgba(0, 255, 0, 0.5); /* Polovina animace - zelené */
-    }
-    100% {
-        fill: rgba(0, 0, 255, 0.5); /* Konec - modré */
-    }
-}
+        @keyframes pulseBorder {
+            0% {
+                fill: rgba(255, 0, 0, 0.5);
+                /* Začátek - červené */
+            }
 
-.zone.pulsing {
-    animation: pulseBorder 1s ease-in-out infinite; /* Pulzující efekt */
-    border: 4px solid; /* Orámování */
-    border-radius: 8px; /* Zaoblené rohy (volitelné) */
-}
-        
+            50% {
+                fill: rgba(0, 255, 0, 0.5);
+                /* Polovina animace - zelené */
+            }
+
+            100% {
+                fill: rgba(0, 0, 255, 0.5);
+                /* Konec - modré */
+            }
+        }
+
+        .zone.pulsing {
+            animation: pulseBorder 1s ease-in-out infinite;
+            /* Pulzující efekt */
+            border: 4px solid;
+            /* Orámování */
+            border-radius: 8px;
+            /* Zaoblené rohy (volitelné) */
+        }
     </style>
 </head>
+
 <body>
 
     <!-- Nový progress bar -->
@@ -166,190 +180,205 @@
         </select>
     </div>
 
-<figure id="projectsvg">
-    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1920" preserveAspectRatio="xMinYMin meet">
-        <image width="1080" height="1920" xlink:href="mapa.png" />
-    </svg>
-</figure>
+    <figure id="projectsvg">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 1080 1920" preserveAspectRatio="xMinYMin meet">
+            <image width="1080" height="1920" xlink:href="mapa.png" />
+        </svg>
+    </figure>
 
-<script>
-    const zones = [
-    { x: 850, y: 897, width: 230, height: 50, title: "BI", description: "Prezentace biologického kroužku", room: "PBI, LBI", link: "#" },
-    { x: 170, y: 900, width: 170, height: 50, title: "ZSV", description: "Neurovědecká laboratoř", room: "U4D", link: "#" },
-    { x: 143, y: 70, width: 230, height: 50, title: "BI", description: "Fantastická zvířata", room: "BAD", link: "#" },
-    { x: 170, y: 845, width: 230, height: 50, title: "ZSV", description: "Vynálezy a současný svět", room: "U1C", link: "#" },
-    { x: 850, y: 1650, width: 300, height: 50, title: "TV", description: "Biomechanika ve sportu", room: "Těv", link: "#" },
-    { x: 789.5, y: 1360, width: 230, height: 50, title: "FY", description: "Chladniho obrazce", room: "LFY", link: "#" },
-    { x: 666.5, y: 1300, width: 330, height: 50, title: "FY", description: "Experimenty barona Prášila", room: "PFY", link: "#" },
-    { x: 143, y: 15, width: 230, height: 50, title: "FY", description: "Čidla Vernier", room: "BAD", link: "#" },
-    { x: 830, y: 60, width: 230, height: 50, title: "HV", description: "Hudební aktivity", room: "HV1", link: "#" },
-    { x: 681.5, y: 890.5, width: 110, height: 50, title: "NJ", description: "Jazykové úkoly", room: "J2", link: "#" },
-    { x: 700, y: 40, width: 230, height: 50, title: "MAT", description: "Matyáš Sandorf", room: "U3C", link: "#" },
-    { x: 423.5, y: 835, width: 230, height: 50, title: "FJ", description: "Malý princ", room: "U5A", link: "#" },
-    { x: 522.5, y: 892, width: 135, height: 50, title: "AJ", description: "Kvízy o vynálezcích", room: "J1", link: "#" },
-    { x: 50, y: 600, width: 80, height: 50, title: "IT", description: "Létání s drony", room: "U3A", link: "#" },
-    { x: 20, y: 340, width: 130, height: 50, title: "IT", description: "Microbit a 3D tisk", room: "U3D", link: "#" },
-    { x: 900, y: 410, width: 90, height: 50, title: "RJ", description: "Harry Potter", room: "J4", link: "#" },
-    { x: 50, y: 1550, width: 120, height: 50, title: "CH", description: "Barevná chemie", room: "LCH", link: "#" },
-    { x: 150, y: 1380, width: 100, height: 50, title: "CH", description: "Fluorescence", room: "PCH", link: "#" },
-    { x: 500, y: 700, width: 230, height: 50, title: "ČJ", description: "Filmové adaptace", room: "", link: "#" },
-    { x: 900, y: 220, width: 230, height: 50, title: "De", description: "Výstavka verneovek", room: "kabDE", link: "#" },
-    { x: 350, y: 1300, width: 230, height: 50, title: "AJ/ZE", description: "Gymnázium na cestách", room: "U2D", link: "#" },
-    { x: 400, y: 200, width: 230, height: 50, title: "VV", description: "Karel Zeman", room: "ATV", link: "#" },
-    { x: 600, y: 1360, width: 230, height: 50, title: "Bistro", description: "Francouzské bistro", room: "U3A", link: "#" },
-    { x: 460, y: 1360, width: 230, height: 50, title: "Kavárna", description: "Nejlepší kavárna", room: "U2A", link: "#" },
-    { x: 230, y: 1450, width: 230, height: 50, title: "Škola", description: "Prezentace školy", room: "U2C", link: "#" },
-    { x: 350, y: 1360, width: 230, height: 50, title: "Sbor", description: "Pěvecký sbor", room: "U2D", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "PZE", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U4A", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "UTA", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U6A", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U1A", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U3D", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U4C", link: "#" },
-    { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U1D", link: "#" },
-];
+    <script>
+        const zones = [
+            { x: 850, y: 897, width: 230, height: 50, title: "BI", description: "Prezentace biologického kroužku", room: "PBI, LBI", link: "#", code: "1234", type: "default" },
+            { x: 170, y: 900, width: 170, height: 50, title: "ZSV", description: "Neurovědecká laboratoř", room: "U4D", link: "#", code: "5678", type: "default" },
+            { x: 143, y: 70, width: 230, height: 50, title: "BI", description: "Fantastická zvířata", room: "BAD", link: "#", code: "9012", type: "default" },
+            { x: 170, y: 845, width: 230, height: 50, title: "ZSV", description: "Vynálezy a současný svět", room: "U1C", link: "#", code: "3456", type: "default" },
+            { x: 900, y: 1650, width: 300, height: 50, title: "TV", description: "Biomechanika ve sportu", room: "Těv", link: "#", code: "7890", type: "default" },
+            { x: 789.5, y: 1360, width: 230, height: 50, title: "FY", description: "Chladniho obrazce", room: "LFY", link: "#", code: "1111", type: "default" },
+            { x: 666.5, y: 1300, width: 330, height: 50, title: "FY", description: "Experimenty barona Prášila", room: "PFY", link: "#", code: "2222", type: "default" },
+            { x: 143, y: 15, width: 230, height: 50, title: "FY", description: "Čidla Vernier", room: "BAD", link: "#", code: "3333", type: "default" },
+            { x: 830, y: 60, width: 230, height: 50, title: "HV", description: "Hudební aktivity", room: "HV1", link: "#", code: "4444", type: "default" },
+            { x: 681.5, y: 890.5, width: 110, height: 50, title: "NJ", description: "Jazykové úkoly", room: "J2", link: "#", code: "5555", type: "default" },
+            { x: 700, y: 40, width: 230, height: 50, title: "MAT", description: "Matyáš Sandorf", room: "U3C", link: "#", code: "6666", type: "default" },
+            { x: 423.5, y: 835, width: 230, height: 50, title: "FJ", description: "Malý princ", room: "U5A", link: "#", code: "7777", type: "default" },
+            { x: 522.5, y: 892, width: 135, height: 50, title: "AJ", description: "Kvízy o vynálezcích", room: "J1", link: "#", code: "8888", type: "default" },
+            { x: 50, y: 600, width: 80, height: 50, title: "IT", description: "Létání s drony", room: "U3A", link: "#", code: "9999", type: "default" },
+            { x: 20, y: 340, width: 130, height: 50, title: "IT", description: "Microbit a 3D tisk", room: "U3D", link: "#", code: "0000", type: "default" },
+            { x: 900, y: 410, width: 90, height: 50, title: "RJ", description: "Harry Potter", room: "J4", link: "#", code: "1357", type: "default" },
+            { x: 50, y: 1550, width: 120, height: 50, title: "CH", description: "Barevná chemie", room: "LCH", link: "#", code: "2468", type: "default" },
+            { x: 150, y: 1380, width: 100, height: 50, title: "CH", description: "Fluorescence", room: "PCH", link: "#", code: "1234", type: "default" },
+            { x: 500, y: 700, width: 230, height: 50, title: "ČJ", description: "Filmové adaptace", room: "", link: "#", code: "5678", type: "default" },
+            { x: 900, y: 220, width: 230, height: 50, title: "De", description: "Výstavka verneovek", room: "kabDE", link: "#", code: "9012", type: "default" },
+            { x: 350, y: 1300, width: 230, height: 50, title: "AJ/ZE", description: "Gymnázium na cestách", room: "U2D", link: "#", code: "3456", type: "default" },
+            { x: 400, y: 200, width: 230, height: 50, title: "VV", description: "Karel Zeman", room: "ATV", link: "#", code: "7890", type: "default" },
+            { x: 600, y: 1360, width: 230, height: 50, title: "Bistro", description: "Francouzské bistro", room: "U3A", link: "#", code: "1111", type: "default" },
+            { x: 460, y: 1360, width: 230, height: 50, title: "Kavárna", description: "Nejlepší kavárna", room: "U2A", link: "#", code: "2222", type: "default" },
+            { x: 230, y: 1450, width: 230, height: 50, title: "Škola", description: "Prezentace školy", room: "U2C", link: "#", code: "3333", type: "default" },
+            { x: 350, y: 1360, width: 230, height: 50, title: "Sbor", description: "Pěvecký sbor", room: "U2D", link: "#", code: "4444", type: "default" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "PZE", link: "#", code: "5555", type: "prijimacky" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U4A", link: "#", code: "6666", type: "prijimacky" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "UTA", link: "#", code: "7777", type: "prijimacky" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U6A", link: "#", code: "8888", type: "prijimacky" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U1A", link: "#", code: "9999", type: "prijimacky" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U3D", link: "#", code: "0000", type: "prijimacky" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U4C", link: "#", code: "1357", type: "prijimacky" },
+            { x: 143, y: 2070, width: 230, height: 50, title: "Přijímačky", description: "Přijímačky nanečisto", room: "U1D", link: "#", code: "2468", type: "prijimacky" }
+        ];
 
+        // Funkce pro výpočet šířky podle délky popisu
+        function calculateWidth(description) {
+            return Math.min((description.length) * 7 + 20, 330); // Základní šířka 230 a maximální 330
+        }
 
+        // Aplikování funkce na zóny
+        zones.forEach(zone => {
 
-
-    // Funkce pro výpočet šířky podle délky popisu
-    function calculateWidth(description) {
-        return Math.min((description.length) * 7 + 20, 330); // Základní šířka 230 a maximální 330
-    }
-
-    // Aplikování funkce na zóny
-    zones.forEach(zone => {
-        
             zone.width = calculateWidth(zone.description);
-        
-    });
 
-    const svgElement = document.querySelector('svg');
-    const zoneSelect = document.getElementById('zoneSelect');
-    const progressFill = document.querySelector('.progress-fill');
-    const progressText = document.querySelector('.progress-text');
+        });
 
-    // Načtení stavu hotových zón z localStorage
-    let completedZones = JSON.parse(localStorage.getItem('completedZones') || '[]');
+        const svgElement = document.querySelector('svg');
+        const zoneSelect = document.getElementById('zoneSelect');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressText = document.querySelector('.progress-text');
 
-    // Inicializace vyhledávací lišty
-    zones.forEach((zone, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${zone.title} - ${zone.description}`;
-        zoneSelect.appendChild(option);
-    });
+        // Načtení stavu hotových zón z localStorage
+        let completedZones = JSON.parse(localStorage.getItem('completedZones') || '[]');
 
-    // Funkce pro aktualizaci progress baru
-    function updateProgress() {
-        const totalZones = zones.length;
-        const completedCount = completedZones.length;
-        const percentage = (completedCount / totalZones) * 100;
-        
-        progressFill.style.width = `${percentage}%`;
-        progressText.textContent = `${completedCount} / ${totalZones} splněných zón`;
-    }
+        // Inicializace vyhledávací lišty
+        zones.forEach((zone, index) => {
+            if (zone.type !== "prijimacky") { // Vynecháme přijímačky
+                const option = document.createElement("option");
+                option.value = zone.title;
+                option.textContent = `${zone.title} - ${zone.description}`;
+                zoneSelect.appendChild(option);
+            }
+        });
 
-    function updateZones() {
-    svgElement.innerHTML = '<image width="1080" height="1920" xlink:href="mapa.png" />';
-    zones.forEach((zone, index) => {
-        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        group.classList.add("hover_group");
+        // Funkce pro aktualizaci progress baru
+        function updateProgress() {
+            const totalZones = zones.filter(zone =>zone.type !== "prijimacky").length;
+            const completedCount = completedZones.filter(zone =>zone.type !== "prijimacky").length;
 
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.classList.add("zone");
-        if (completedZones.includes(index)) {
-                rect.classList.add("completed");
-        }
-        rect.setAttribute("x", zone.x);
-        rect.setAttribute("y", zone.y);
-        rect.setAttribute("width", zone.width);
-        rect.setAttribute("height", zone.height);
-        rect.setAttribute("data-index", index);
+            const percentage = (completedCount / totalZones) * 100;
 
-        // Přidání click event listeneru pro označení/odznačení zóny
-        rect.addEventListener('click', () => toggleZoneCompletion(index));
-
-        const titleText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        titleText.classList.add("title");
-        titleText.setAttribute("x", zone.x + zone.width * 0.1);
-        titleText.setAttribute("y", zone.y + 20);
-
-        // `tspan` for title
-        const titleTspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        titleTspan.textContent = zone.title;
-
-        // `tspan` for room with `description` class
-        const roomTspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        roomTspan.textContent = ` (${zone.room})`;
-        roomTspan.classList.add("description");  // Add the 'description' class
-
-        // Append tspans to titleText
-        titleText.appendChild(titleTspan);
-        titleText.appendChild(roomTspan);
-
-        const descriptionText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        descriptionText.classList.add("description");
-        descriptionText.setAttribute("x", zone.x + zone.width * 0.1);
-        descriptionText.setAttribute("y", zone.y + 40);
-        descriptionText.textContent = zone.description;
-
-        group.appendChild(rect);
-        group.appendChild(titleText);
-        group.appendChild(descriptionText);
-
-        svgElement.appendChild(group);
-    });
-
-     // Aktualizace progress baru při načtení
-     updateProgress();
-}
-
-
-    
-
-    function toggleZoneCompletion(index) {
-        const zoneElement = document.querySelector(`.zone[data-index="${index}"]`);
-        
-        if (completedZones.includes(index)) {
-            // Odznačení zóny
-            completedZones = completedZones.filter(i => i !== index);
-            zoneElement.classList.remove('completed');
-        } else {
-            // Označení zóny
-            completedZones.push(index);
-            zoneElement.classList.add('completed');
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = `${completedCount} / ${totalZones} splněných zón`;
         }
 
-        // Uložení do localStorage
-        localStorage.setItem('completedZones', JSON.stringify(completedZones));
+        function updateZones() {
+            svgElement.innerHTML = '<image width="1080" height="1920" xlink:href="mapa.png" />';
+            zones.forEach((zone, index) => {
+                const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                group.classList.add("hover_group");
 
-        // Aktualizace progress baru při změně
-        updateProgress();
-    }
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.classList.add("zone");
 
-    function highlightZone(index) {
-        document.querySelectorAll('.zone').forEach(zone => zone.classList.remove('highlight'));
-        // Odstranění pulzujícího orámování u všech zón
-        document.querySelectorAll('.zone').forEach(zone => zone.classList.remove('pulsing'));
-        const selectedZone = document.querySelector(`.zone[data-index="${index}"]`);
-        if (selectedZone) {
-            selectedZone.classList.add('highlight');
-            selectedZone.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-            selectedZone.classList.add('pulsing'); // Přidání pulzujícího orámování
+                // Nastavení barvy podle typu
+                if (zone.type === "prijimacky") {
+                    rect.style.fill = "rgba(128, 128, 128, 0.6)"; // Šedá barva pro přijímačky
+                    rect.classList.add("unselectable"); // Přidáme třídu, kterou pak využijeme k ověření
+                }
+
+                if (completedZones.includes(index)) {
+                    rect.classList.add("completed");
+                }
+                rect.setAttribute("x", zone.x);
+                rect.setAttribute("y", zone.y);
+                rect.setAttribute("width", zone.width);
+                rect.setAttribute("height", zone.height);
+                rect.setAttribute("data-index", index);
+
+                // Přidání click event listeneru pro označení/odznačení zóny
+                rect.addEventListener('click', () => toggleZoneCompletion(index));
+
+                const titleText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                titleText.classList.add("title");
+                titleText.setAttribute("x", zone.x + zone.width * 0.1);
+                titleText.setAttribute("y", zone.y + 20);
+
+                // `tspan` for title
+                const titleTspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                titleTspan.textContent = zone.title;
+
+                // `tspan` for room with `description` class
+                const roomTspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                roomTspan.textContent = ` (${zone.room})`;
+                roomTspan.classList.add("description");  // Add the 'description' class
+
+                // Append tspans to titleText
+                titleText.appendChild(titleTspan);
+                titleText.appendChild(roomTspan);
+
+                const descriptionText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                descriptionText.classList.add("description");
+                descriptionText.setAttribute("x", zone.x + zone.width * 0.1);
+                descriptionText.setAttribute("y", zone.y + 40);
+                descriptionText.textContent = zone.description;
+
+                group.appendChild(rect);
+                group.appendChild(titleText);
+                group.appendChild(descriptionText);
+
+                svgElement.appendChild(group);
+            });
+
+            // Aktualizace progress baru při načtení
+            updateProgress();
         }
-    }
 
-    zoneSelect.addEventListener('change', (event) => {
-        const selectedIndex = event.target.value;
-        if (selectedIndex) {
-            highlightZone(selectedIndex);
+
+
+
+        function toggleZoneCompletion(index) {
+            const zoneElement = document.querySelector(`.zone[data-index="${index}"]`);
+
+            // Nová funkce pro zadání kódu
+            const code = prompt("Zadejte kód pro dokončení zóny:");
+            if (code === zones[index].code) { // Ověření kódu
+                if (completedZones.includes(index)) {
+                    // Odznačení zóny
+                    completedZones = completedZones.filter(i => i !== index);
+                    zoneElement.classList.remove('completed');
+                } else {
+                    // Označení zóny
+                    completedZones.push(index);
+                    zoneElement.classList.add('completed');
+                }
+
+                // Uložení do localStorage
+                localStorage.setItem('completedZones', JSON.stringify(completedZones));
+
+                // Aktualizace progress baru při změně
+                updateProgress();
+            } else {
+                alert("Zadali jste nesprávný kód.");
+            }
         }
-    });
 
-    updateZones();
-</script>
+        function highlightZone(index) {
+            document.querySelectorAll('.zone').forEach(zone => zone.classList.remove('highlight'));
+            // Odstranění pulzujícího orámování u všech zón
+            document.querySelectorAll('.zone').forEach(zone => zone.classList.remove('pulsing'));
+            const selectedZone = document.querySelector(`.zone[data-index="${index}"]`);
+            if (selectedZone) {
+                selectedZone.classList.add('highlight');
+                selectedZone.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+                selectedZone.classList.add('pulsing'); // Přidání pulzujícího orámování
+            }
+        }
+
+        zoneSelect.addEventListener('change', (event) => {
+            const selectedIndex = event.target.value;
+            if (selectedIndex) {
+                highlightZone(selectedIndex);
+            }
+        });
+
+        updateZones();
+    </script>
 
 </body>
+
 </html>
