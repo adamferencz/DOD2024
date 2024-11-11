@@ -377,24 +377,20 @@
 
         updateZones();
 
-        // Detekce, zda se aplikace otevřela v interním prohlížeči Messengeru
+        // Funkce pro detekci, zda se aplikace otevřela v interním prohlížeči Messengeru
         function isInMessengerBrowser() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             return /FBAN|FBAV/.test(userAgent);
         }
 
-        // Funkce pro přesměrování na normální webový prohlížeč
-        function redirectToNormalBrowser() {
-            // Získání aktuální URL adresy
-            const currentUrl = window.location.href;
-
-            // Přesměrování na aktuální URL adresu, ale v normálním webovém prohlížeči
-            window.location.replace(`https://dod-2024.vercel.app/`);
+        // Funkce pro zobrazení alertu s výzvou k otevření v normálním prohlížeči
+        function showNormalBrowserAlert() {
+            alert("Pro nejlepší zážitek otevřete tuto aplikaci v normálním webovém prohlížeči.");
         }
 
-        // Kontrola, zda se aplikace otevřela v Messengeru a případné přesměrování
+        // Kontrola, zda se aplikace otevřela v Messengeru a zobrazení alertu
         if (isInMessengerBrowser()) {
-            redirectToNormalBrowser();
+            showNormalBrowserAlert();
         }
     </script>
 
