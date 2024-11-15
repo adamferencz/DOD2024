@@ -186,7 +186,7 @@
             <image width="1080" height="1920" xlink:href="mapa.png" />
         </svg>
     </figure>
-
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
     <script>
         const zones = [
             { x: 850, y: 897, width: 230, height: 50, title: "BI", description: "Prezentace biologického kroužku", room: "PBI, LBI", link: "#", code: "4721", type: "default" },
@@ -334,28 +334,63 @@
         function toggleZoneCompletion(index) {
             const zoneElement = document.querySelector(`.zone[data-index="${index}"]`);
 
-            // Nová funkce pro zadání kódu
             const code = prompt("Zadejte kód pro dokončení zóny:");
-            if (code === zones[index].code) { // Ověření kódu
-                if (completedZones.includes(index)) {
-                    // Odznačení zóny
-                    completedZones = completedZones.filter(i => i !== index);
-                    zoneElement.classList.remove('completed');
+
+            if (code !== null) {
+                if (code === zones[index].code) {
+                    if (completedZones.includes(index)) {
+                        // Odznačení zóny
+                        completedZones = completedZones.filter(i => i !== index);
+                        zoneElement.classList.remove('completed');
+                    } else {
+                        // Označení zóny
+                        completedZones.push(index);
+                        zoneElement.classList.remove('pulsing');
+                        zoneElement.classList.add('completed');
+
+                        // Spuštění konfet
+                        startConfetti();
+                    }
+
+                    // Uložení do localStorage
+                    localStorage.setItem('completedZones', JSON.stringify(completedZones));
+
+                    // Aktualizace progress baru při změně
+                    updateProgress();
                 } else {
-                    // Označení zóny
-                    completedZones.push(index);
-                    zoneElement.classList.add('completed');
+                    alert("Zadali jste nesprávný kód.");
                 }
-
-                // Uložení do localStorage
-                localStorage.setItem('completedZones', JSON.stringify(completedZones));
-
-                // Aktualizace progress baru při změně
-                updateProgress();
-            } else {
-                alert("Zadali jste nesprávný kód.");
             }
         }
+
+        // Funkce pro spuštění konfet na 5 sekund
+        function startConfetti() {
+            const duration = 2500; // Délka v milisekundách
+            const end = Date.now() + duration;
+
+            // Funkce pro generování konfet
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                // Pokračuj, dokud čas nevyprší
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+        }
+
+
 
         function highlightZone(index) {
             document.querySelectorAll('.zone').forEach(zone => zone.classList.remove('highlight'));
