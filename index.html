@@ -160,17 +160,71 @@
             border-radius: 8px;
             /* Zaoblené rohy (volitelné) */
         }
+
+        .threshold {
+            position: absolute;
+            top: 10%;
+            transform: translateY(-80%);
+            font-size: 24px;
+            color: gold;
+            /* Barva poháru */
+            z-index: 10;
+        }
+
+        /* Styl modálního okna */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        .modal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background: #45a049;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- Nový progress bar -->
+    <!-- Progress bar -->
     <div class="progress-container">
         <div class="progress-bar">
             <div class="progress-fill"></div>
+            <!-- Linie pro hranici 15 bodů -->
+            <div class="threshold" style="left: 55%;"> <!-- Pozice thresholdu (15/23) -->
+                🏆
+            </div>
         </div>
         <div class="progress-text">0 / 0 splněných zón</div>
+    </div>
+
+    <!-- Modální okno -->
+    <div id="rewardModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Gratulujeme!</h2>
+            <p>Dosáhl/a jste 15 bodů! Můžete si vyzvednout svou odměnu v cíli. Ve hře lze pokračovat a získat všechny stanoviště.</p>
+            <button id="closeModal">Pokračovat</button>
+        </div>
     </div>
 
     <div class="search-bar">
@@ -263,7 +317,33 @@
 
             progressFill.style.width = `${percentage}%`;
             progressText.textContent = `${completedCount} / ${totalZones} splněných zón`;
+
+            // Kontrola dosažení 15 bodů
+            if (completedCount === 15) {
+                showRewardModal();
+                triggerConfetti();
+            }
         }
+
+        // Zobrazení modálního okna
+        function showRewardModal() {
+            rewardModal.style.display = "block";
+        }
+
+        // Zavření modálního okna
+        closeModal.addEventListener("click", () => {
+            rewardModal.style.display = "none";
+        });
+
+        // Konfety
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+            });
+        }
+
 
         function updateZones() {
             svgElement.innerHTML = '<image width="1080" height="1920" xlink:href="mapa.png" />';
